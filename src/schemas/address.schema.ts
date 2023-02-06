@@ -22,4 +22,4 @@ const addressSchema = Joi.object<Address>({
     state: Joi.string().required()
 })
 
-export { addressSchema }
+export { addressSchema, Address }
