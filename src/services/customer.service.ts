@@ -9,7 +9,7 @@ async function formatCustomerAndRequestAddress(customer: CustomerDb): Promise<Cu
         name: customer.name,
         telephone: customer.telephone,
         income: customer.income,
-        // address: a// (await addressApi.get<Address>(`/${customer.id}`)).data
+        address: (await addressApi.get<Address>(`/${customer.id}`)).data
     }
 }
 
@@ -23,7 +23,7 @@ async function getAllCustomersRequest(): Promise<CustomerComposition[]> {
 }
 
 
-async function modifyCustomerRequest(id: number, customer: CustomerDb) {
+async function modifyCustomerRequest(id: number, customer: CustomerComposition) {
     const modifiedCustomer = await customerApi.put<CustomerDb>(`/${id}`, customer)
     return await formatCustomerAndRequestAddress(modifiedCustomer.data)
 }
@@ -36,9 +36,16 @@ async function deleteCustomerRequest(id: number) {
     await customerApi.delete(`/${id}`,)
 }
 
-async function addCustomerRequest(customer: CustomerDb) {
-    const addedCustomer = await customerApi.post<CustomerDb>('/', customer)
-    return addedCustomer
+async function addCustomerRequest(customer: CustomerComposition) {
+    const addCustomer = await addressApi.post<Address>('', customer.address)
+    const addedCustomer = await customerApi.post<CustomerDb>('', {
+        ...customer,
+        address: addCustomer.data.id
+    })
+    return {
+        ...addedCustomer.data,
+        address: addCustomer.data
+    }
 }
 
 

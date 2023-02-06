@@ -15,27 +15,17 @@ interface CustomerComposition {
     name: string,
     cpf: string,
     address: Address,
-    telephone: string,
-    income: number
+    phone: string,
+    salary: number
 }
-
-const customerSchema = Joi.object<CustomerDb>({
-    id: Joi.number(),
-    name: Joi.string().required(),
-    cpf: Joi.string().required(),
-    address: Joi.number().required(),
-    telephone: Joi.string().required(),
-    income: Joi.number().required()
-})
 
 const customerComposition = Joi.object<CustomerComposition>({
     id: Joi.number(),
     name: Joi.string().required(),
     cpf: Joi.string().required(),
     address: addressSchema.required(),
-    telephone: Joi.string().required(),
-    income: Joi.number().required()
+    phone: Joi.string().required(),
+    salary: Joi.number().required()
 })
 
-export { customerSchema }
 export { CustomerDb, CustomerComposition, customerComposition }
