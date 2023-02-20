@@ -10,8 +10,7 @@ interface Customer {
     salary: number
 }
 
-interface Register {
-    customer: Customer,
+interface Register extends Omit<Customer, 'address'> {
     address: Address,
     authentication: {
         email: string,
@@ -28,7 +27,10 @@ const customer = Joi.object<Customer>({
 })
 
 const registerSchema = Joi.object<Register>({
-    customer: customer.required(),
+    name: Joi.string().required(),
+    cpf: Joi.string().required(),
+    phone: Joi.string().required(),
+    salary: Joi.number().required(),
     address: addressSchema.required(),
     authentication: Joi.object({
         login: Joi.string().required(),
@@ -36,5 +38,17 @@ const registerSchema = Joi.object<Register>({
     }).required()
 })
 
-export { customer, registerSchema }
+const modifyCustomerSchema = Joi.object<Partial<Register>>({
+    name: Joi.string(),
+    cpf: Joi.string(),
+    phone: Joi.string(),
+    salary: Joi.number(),
+    address: addressSchema,
+    authentication: Joi.object({
+        login: Joi.string(),
+        password: Joi.string()
+    })
+})
+
+export { customer, registerSchema, modifyCustomerSchema }
 export { Customer, Register }

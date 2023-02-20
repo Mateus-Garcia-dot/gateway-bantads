@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { validate } from "../utils/validate";
 import { idSchema } from "../schemas/id.schema";
-import { getAllCustomersRequest, getOneCostumerRequest, registerRequest } from "../services/customer.service";
-import { registerSchema } from "../schemas/customer.schema";
+import { getAllCustomersRequest, getOneCostumerRequest, modifyCustomerRequest, registerRequest } from "../services/customer.service";
+import { modifyCustomerSchema, registerSchema } from "../schemas/customer.schema";
 
 
 async function getAllCustomers(req: Request, res: Response) {
@@ -20,15 +20,15 @@ async function getOneCustomer(req: Request, res: Response) {
 async function register(req: Request, res: Response) {
     const body = validate(req.body, registerSchema)
     await registerRequest(body)
-    return res.status(200).json({ data: 'added to the queue' })
+    return res.status(200).json({ data: 'Added to the queue' })
 }
 
-// async function modifyCustomer(req: Request, res: Response) {
-//     const body = validate(req.body, customerComposition)
-//     const params = validate(req.params, idSchema)
-//     const customer = await modifyCustomerRequest(params.id, body)
-//     return customer
-// }
+async function modifyCustomer(req: Request, res: Response) {
+    const body = validate(req.body, registerSchema)
+    const params = validate(req.params, idSchema)
+    const customer = await modifyCustomerRequest(params.id, body)
+    return res.status(200).json({ data: 'Added to the queue' })
+}
 
 // async function deleteCustomer(req: Request, res: Response) {
 //     const params = validate(req.params, idSchema)
@@ -36,7 +36,7 @@ async function register(req: Request, res: Response) {
 //     return res.status(200).json('Deleted')
 // }
 
-export { getAllCustomers, getOneCustomer, register }
+export { getAllCustomers, getOneCustomer, register, modifyCustomer }
 
 
 
