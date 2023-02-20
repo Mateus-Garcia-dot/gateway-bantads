@@ -34,20 +34,20 @@ const registerSchema = Joi.object<Register>({
     address: addressSchema.required(),
     authentication: Joi.object({
         login: Joi.string().required(),
-        password: Joi.string().required()
+        password: Joi.string()
     }).required()
 })
 
 const modifyCustomerSchema = Joi.object<Partial<Register>>({
-    name: Joi.string(),
-    cpf: Joi.string(),
-    phone: Joi.string(),
-    salary: Joi.number(),
+    name: Joi.string().optional(),
+    cpf: Joi.string().optional(),
+    phone: Joi.string().optional(),
+    salary: Joi.number().optional(),
     address: addressSchema,
     authentication: Joi.object({
-        login: Joi.string(),
-        password: Joi.string()
-    })
+        login: Joi.string().optional(),
+        password: Joi.string().optional()
+    }).optional()
 })
 
 export { customer, registerSchema, modifyCustomerSchema }

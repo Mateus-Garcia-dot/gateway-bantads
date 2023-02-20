@@ -11,6 +11,7 @@ interface Address {
     state: string
 }
 
+
 const addressSchema = Joi.object<Address>({
     uuid: Joi.number(),
     type: Joi.string().required(),
@@ -22,4 +23,15 @@ const addressSchema = Joi.object<Address>({
     state: Joi.string().required()
 })
 
-export { addressSchema, Address }
+const optionalAddressSchema = Joi.object<Partial<Address>>({
+    uuid: Joi.number().optional(),
+    type: Joi.string().optional(),
+    street: Joi.string().optional(),
+    number: Joi.number().optional(),
+    city: Joi.string().optional(),
+    complement: Joi.string().optional(),
+    cep: Joi.string().optional(),
+    state: Joi.string().optional()
+})
+
+export { addressSchema, Address, optionalAddressSchema }

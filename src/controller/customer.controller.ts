@@ -4,7 +4,6 @@ import { idSchema } from "../schemas/id.schema";
 import { getAllCustomersRequest, getOneCostumerRequest, modifyCustomerRequest, registerRequest } from "../services/customer.service";
 import { modifyCustomerSchema, registerSchema } from "../schemas/customer.schema";
 
-
 async function getAllCustomers(req: Request, res: Response) {
     return res.status(200).json(await getAllCustomersRequest())
 }
@@ -16,17 +15,18 @@ async function getOneCustomer(req: Request, res: Response) {
 }
 
 
-// this function uses the orchestrator and is using a queue
+// this function uses the orchestrator and its using a queue
 async function register(req: Request, res: Response) {
     const body = validate(req.body, registerSchema)
     await registerRequest(body)
     return res.status(200).json({ data: 'Added to the queue' })
 }
 
+// this function uses the orchestrator and its using a queue
 async function modifyCustomer(req: Request, res: Response) {
-    const body = validate(req.body, registerSchema)
+    const body = validate(req.body, modifyCustomerSchema)
     const params = validate(req.params, idSchema)
-    const customer = await modifyCustomerRequest(params.id, body)
+    await modifyCustomerRequest(params.id, body)
     return res.status(200).json({ data: 'Added to the queue' })
 }
 
