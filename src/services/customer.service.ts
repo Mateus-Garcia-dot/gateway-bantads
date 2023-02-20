@@ -29,4 +29,8 @@ async function registerRequest(register: Register) {
     await orchestratorApi.post('/bl/register', register)
 }
 
-export { getAllCustomersRequest, getOneCostumerRequest, registerRequest }
+async function modifyCustomerRequest(id: string, modifyCustomer: Partial<Register>) {
+    await orchestratorApi.patch(`/bl/customer/${id}`, modifyCustomer)
+}
+
+export { getAllCustomersRequest, getOneCostumerRequest, registerRequest, modifyCustomerRequest }
