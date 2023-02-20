@@ -1,52 +1,32 @@
-import { addressApi, customerApi } from "../databases/axiosConnections"
+import { addressApi, authenticationApi, customerApi, orchestratorApi } from "../databases/axiosConnections"
 import { Address } from "../schemas/address.schema"
-import { CustomerComposition, CustomerDb, customerComposition, } from "../schemas/customer.schema"
+import { Customer, Register } from "../schemas/customer.schema"
 
-async function formatCustomerAndRequestAddress(customer: CustomerDb): Promise<CustomerComposition> {
-    return {
-        id: customer.id,
-        cpf: customer.cpf,
-        name: customer.name,
-        telephone: customer.telephone,
-        income: customer.income,
-        address: (await addressApi.get<Address>(`/${customer.id}`)).data
-    }
+async function getAllCustomersRequest() {
+    const customers = await customerApi.get<Customer[]>('')
+    if (customers.data.length === 0) return customers.data
+    const customerWithAddress = await Promise.all(customers.data.map(async (customer) => {
+        const address = await addressApi.get<Address>(`/${customer.address}`)
+        const auth = await authenticationApi.get(`/customer/${customer.uuid}`)
+        delete auth.data.customer
+        delete auth.data.password
+        return { ...customer, address: address.data, authentication: auth.data }
+    }))
+    console.log(customerWithAddress)
+    return customerWithAddress
 }
 
-async function getAllCustomersRequest(): Promise<CustomerComposition[]> {
-    const customer = await customerApi.get<CustomerDb[]>('')
-    const customerWithAddressPromise = customer.data.reduce<Array<Promise<CustomerComposition>>>((acc, customer) => {
-        acc.push(formatCustomerAndRequestAddress(customer))
-        return acc
-    }, [])
-    return await Promise.all(customerWithAddressPromise)
+async function getOneCostumerRequest(id: string) {
+    const customer = await customerApi.get<Customer>(`/${id}`)
+    const address = await addressApi.get<Address>(`/${customer.data.address}`)
+    const auth = await authenticationApi.get(`/customer/${customer.data.uuid}`)
+    delete auth.data.password
+    delete auth.data.customer
+    return { ...customer.data, address: address.data, authentication: auth.data }
 }
 
-
-async function modifyCustomerRequest(id: number, customer: CustomerComposition) {
-    const modifiedCustomer = await customerApi.put<CustomerDb>(`/${id}`, customer)
-    return await formatCustomerAndRequestAddress(modifiedCustomer.data)
+async function registerRequest(register: Register) {
+    await orchestratorApi.post('/bl/register', register)
 }
 
-async function getOneCostumerRequest(id: number) {
-    return formatCustomerAndRequestAddress((await customerApi.get<CustomerDb>(`/${id}`)).data)
-}
-
-async function deleteCustomerRequest(id: number) {
-    await customerApi.delete(`/${id}`,)
-}
-
-async function addCustomerRequest(customer: CustomerComposition) {
-    const addCustomer = await addressApi.post<Address>('', customer.address)
-    const addedCustomer = await customerApi.post<CustomerDb>('', {
-        ...customer,
-        address: addCustomer.data.id
-    })
-    return {
-        ...addedCustomer.data,
-        address: addCustomer.data
-    }
-}
-
-
-export { getAllCustomersRequest, getOneCostumerRequest, modifyCustomerRequest, deleteCustomerRequest, addCustomerRequest }
+export { getAllCustomersRequest, getOneCostumerRequest, registerRequest }

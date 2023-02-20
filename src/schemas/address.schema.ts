@@ -1,7 +1,7 @@
 import Joi from "joi"
 
 interface Address {
-    id: number,
+    uuid: number,
     type: string,
     street: string,
     number: number,
@@ -12,7 +12,7 @@ interface Address {
 }
 
 const addressSchema = Joi.object<Address>({
-    id: Joi.number(),
+    uuid: Joi.number(),
     type: Joi.string().required(),
     street: Joi.string().required(),
     number: Joi.number().required(),

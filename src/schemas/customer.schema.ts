@@ -1,31 +1,40 @@
 import Joi from "joi"
 import { Address, addressSchema } from "./address.schema"
 
-interface CustomerDb {
-    id: number,
+interface Customer {
+    uuid: string,
     name: string,
     cpf: string,
     address: number,
-    telephone: string,
-    income: number
-}
-
-interface CustomerComposition {
-    id: number,
-    name: string,
-    cpf: string,
-    address: Address,
     phone: string,
     salary: number
 }
 
-const customerComposition = Joi.object<CustomerComposition>({
-    id: Joi.number(),
+interface Register {
+    customer: Customer,
+    address: Address,
+    authentication: {
+        email: string,
+        password: string
+    }
+}
+
+const customer = Joi.object<Customer>({
+    uuid: Joi.number(),
     name: Joi.string().required(),
     cpf: Joi.string().required(),
-    address: addressSchema.required(),
     phone: Joi.string().required(),
     salary: Joi.number().required()
 })
 
-export { CustomerDb, CustomerComposition, customerComposition }
+const registerSchema = Joi.object<Register>({
+    customer: customer.required(),
+    address: addressSchema.required(),
+    authentication: Joi.object({
+        login: Joi.string().required(),
+        password: Joi.string().required()
+    }).required()
+})
+
+export { customer, registerSchema }
+export { Customer, Register }

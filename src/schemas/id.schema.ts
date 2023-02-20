@@ -1,11 +1,11 @@
 import Joi from "joi"
 
 interface Id {
-    id: number
+    id: string
 }
 
 const idSchema = Joi.object<Id>({
-    id: Joi.number().required()
+    id: Joi.string().required()
 })
 
 export { idSchema }
