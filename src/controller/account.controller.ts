@@ -38,8 +38,8 @@ async function transfer(req: Request, res: Response) {
     if (newBalance < -account.limitAmount) {
         return res.status(400).json({ message: "Limit is not enough" })
     }
-    await patchAccount(params.id, { balance: newBalance })
-    await patchAccount(accountToTransfer.uuid, { balance: accountToTransfer.balance + body.amount })
+    await patchAccount(account.customer, { balance: newBalance })
+    await patchAccount(accountToTransfer.customer, { balance: accountToTransfer.balance + body.amount })
     return res.status(200).json({ message: "Transfer successful" })
 }
 

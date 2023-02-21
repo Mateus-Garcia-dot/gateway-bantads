@@ -9,7 +9,9 @@ async function getAccountByConsumer(consumer: string) {
 
 async function getAccountByCpf(cpf: string) {
     const customers = await customerApi.get(`/cpf/${cpf}`)
-    return customers.data.account?.[0]
+    if (customers.data.length === 0) return null
+    const account = await accountApi.get<Account>(`/customer/${customers.data[0].uuid}`)
+    return account.data
 }
 
 
