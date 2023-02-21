@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createManagerRequest, deleteManagerRequest, getAllManagersRequest, getManagerRequest, updateManagerRequest } from "../services/manager.service";
+import { createManagerRequest, deleteManagerRequest, getAllManagersRequest, getManagerRequest, managerConsumerRequest, updateManagerRequest } from "../services/manager.service";
 import { idSchema } from "../schemas/id.schema";
 import { validate } from "../utils/validate";
 import { managerSchema } from "../schemas/manager.schema";
@@ -40,4 +40,10 @@ async function deleteManager(req: Request, res: Response) {
     return res.status(200).json("deleted")
 }
 
-export { getAllManagers, createManager, getManager, updateManager, deleteManager }
+async function managerConsumer(req: Request, res: Response) {
+    const managers = await managerConsumerRequest()
+    return res.status(200).json(managers)
+}
+
+
+export { getAllManagers, createManager, getManager, updateManager, deleteManager, managerConsumer }
