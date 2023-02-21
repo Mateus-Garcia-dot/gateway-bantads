@@ -1,24 +1,34 @@
 import Joi from "joi"
 
 interface Authentication {
-    id: string,
-    account: number,
-    login: string,
-    password: string,
-    type: number,
-    isApproved: boolean,
-    isPending: boolean
+    uuid: string,
+    customer?: string,
+    login?: string,
+    password?: string,
+    type?: number,
+    isApproved?: boolean,
+    isPending?: boolean
 }
 
+interface login {
+    login: string,
+    password: string
+}
 
-const authenticationSchema = Joi.object<Authentication>({
-    id: Joi.string(),
-    account: Joi.number().required(),
+const loginSchema = Joi.object<login>({
     login: Joi.string().required(),
-    password: Joi.string().required(),
-    type: Joi.number().required(),
-    isApproved: Joi.boolean().required(),
-    isPending: Joi.boolean().required()
+    password: Joi.string().required()
 })
 
-export { authenticationSchema }
+const authenticationSchema = Joi.object<Authentication>({
+    uuid: Joi.string(),
+    customer: Joi.number(),
+    login: Joi.string(),
+    password: Joi.string(),
+    type: Joi.number(),
+    isApproved: Joi.boolean(),
+    isPending: Joi.boolean()
+})
+
+export { authenticationSchema, loginSchema }
+export { Authentication }
