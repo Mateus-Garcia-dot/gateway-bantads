@@ -39,4 +39,10 @@ async function updateManagerRequest(id: string, manager: ManagerWithAuthenticati
     return { ...managerReturn.data, authentication: auth.data }
 }
 
-export { getAllManagersRequest, getManagerRequest, createManagerRequest, updateManagerRequest }
+async function deleteManagerRequest(id: string) {
+    const auth = await authenticationApi.get(`/customer/${id}`)
+    await authenticationApi.delete(`/${auth.data.uuid}`)
+    return await managerApi.delete(`/${id}`)
+}
+
+export { getAllManagersRequest, getManagerRequest, createManagerRequest, updateManagerRequest, deleteManagerRequest }

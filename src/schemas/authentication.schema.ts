@@ -1,8 +1,8 @@
 import Joi from "joi"
 
 interface Authentication {
-    id: string,
-    customer?: number,
+    uuid: string,
+    customer?: string,
     login?: string,
     password?: string,
     type?: number,
@@ -21,13 +21,13 @@ const loginSchema = Joi.object<login>({
 })
 
 const authenticationSchema = Joi.object<Authentication>({
-    id: Joi.string(),
-    customer: Joi.number().required(),
-    login: Joi.string().required(),
-    password: Joi.string().required(),
-    type: Joi.number().required(),
-    isApproved: Joi.boolean().required(),
-    isPending: Joi.boolean().required()
+    uuid: Joi.string(),
+    customer: Joi.number(),
+    login: Joi.string(),
+    password: Joi.string(),
+    type: Joi.number(),
+    isApproved: Joi.boolean(),
+    isPending: Joi.boolean()
 })
 
 export { authenticationSchema, loginSchema }

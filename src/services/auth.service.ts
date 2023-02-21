@@ -1,3 +1,4 @@
+import { getPendingAuthentication } from "../controller/auth.controller";
 import { authenticationApi } from "../databases/axiosConnections";
 import { Authentication } from "../schemas/authentication.schema";
 
@@ -9,4 +10,12 @@ async function postAuthenticationRequest(authentication: Authentication) {
     return authenticationApi.post<Authentication>('', authentication)
 }
 
-export { getAuthenticationRequest, postAuthenticationRequest }
+async function getPendingAuthenticationRequest() {
+    return authenticationApi.get<Authentication[]>(`/pending`)
+}
+
+async function patchAuthenticationRequest(id: string, authentication: Partial<Authentication>) {
+    return authenticationApi.patch<Authentication>(`/${id}`, authentication)
+}
+
+export { getAuthenticationRequest, postAuthenticationRequest, getPendingAuthenticationRequest, patchAuthenticationRequest }

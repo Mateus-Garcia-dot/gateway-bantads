@@ -1,7 +1,9 @@
 import { Request, Response } from "express"
 import { validate } from "../utils/validate"
 import { idSchema } from "../schemas/id.schema"
-import { getAuthenticationRequest } from "../services/auth.service"
+import { getAuthenticationRequest, getPendingAuthenticationRequest, patchAuthenticationRequest } from "../services/auth.service"
+import { getOneCustomerRequest as getOneCustomerRequest } from "../services/customer.service"
+import { authenticationSchema } from "../schemas/authentication.schema"
 
 async function getAuthentication(req: Request, res: Response) {
     const params = validate(req.params, idSchema)
@@ -9,4 +11,32 @@ async function getAuthentication(req: Request, res: Response) {
     return res.status(200).json(auth.data)
 }
 
-export { getAuthentication }
+async function getPendingAuthentication(req: Request, res: Response) {
+    const auth = await getPendingAuthenticationRequest()
+    const authWithConsumers = await Promise.all(auth.data.map(async (auth) => {
+        console.log(auth)
+        return getOneCustomerRequest(auth.customer!)
+    }))
+    return res.status(200).json(authWithConsumers)
+}
+
+async function patchAuthentication(req: Request, res: Response) {
+    const params = validate(req.params, idSchema)
+    const body = validate(req.body, authenticationSchema)
+    const auth = await patchAuthenticationRequest(params.id, body)
+    return res.status(200).json(auth.data)
+}
+
+async function approveAuthentication(req: Request, res: Response) {
+    const params = validate(req.params, idSchema)
+    const auth = await patchAuthenticationRequest(params.id, { isApproved: true, isPending: false })
+    return res.status(200).json(auth.data)
+}
+
+async function rejectAuthentication(req: Request, res: Response) {
+    const params = validate(req.params, idSchema)
+    const auth = await patchAuthenticationRequest(params.id, { isApproved: false, isPending: false })
+    return res.status(200).json(auth.data)
+}
+
+export { getAuthentication, getPendingAuthentication, patchAuthentication, approveAuthentication, rejectAuthentication }

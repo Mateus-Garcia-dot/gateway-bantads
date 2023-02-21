@@ -1,16 +1,26 @@
 import { Request, Response } from "express";
 import { validate } from "../utils/validate";
 import { idSchema } from "../schemas/id.schema";
-import { getAllCustomersRequest, getOneCostumerRequest, modifyCustomerRequest, registerRequest } from "../services/customer.service";
+import { getAllCustomersRequest, getCpfCustomerRequest, getOneCustomerRequest, modifyCustomerRequest, registerRequest } from "../services/customer.service";
 import { modifyCustomerSchema, registerSchema } from "../schemas/customer.schema";
 
 async function getAllCustomers(req: Request, res: Response) {
     return res.status(200).json(await getAllCustomersRequest())
 }
 
+async function getTopCustomers(req: Request, res: Response) {
+    const customers = await getAllCustomersRequest() as any[]
+    customers.sort((a, b) => {
+        if (a.account.balance > b.account.balance) return -1
+        if (a.account.balance < b.account.balance) return 1
+        return 0
+    })
+    return res.status(200).json(customers.slice(0, 5))
+}
+
 async function getOneCustomer(req: Request, res: Response) {
     const params = validate(req.params, idSchema)
-    const customer = await getOneCostumerRequest(params.id)
+    const customer = await getOneCustomerRequest(params.id)
     return res.status(200).json(customer)
 }
 
@@ -30,13 +40,20 @@ async function modifyCustomer(req: Request, res: Response) {
     return res.status(200).json({ data: 'Added to the queue' })
 }
 
+async function getCpfCustomer(req: Request, res: Response) {
+    const params = validate(req.params, idSchema)
+    const customer = await getCpfCustomerRequest(params.id)
+    return res.status(200).json(customer)
+}
+
+
 // async function deleteCustomer(req: Request, res: Response) {
 //     const params = validate(req.params, idSchema)
 //     await deleteCustomerRequest(params.id)
 //     return res.status(200).json('Deleted')
 // }
 
-export { getAllCustomers, getOneCustomer, register, modifyCustomer }
+export { getAllCustomers, getOneCustomer, register, modifyCustomer, getCpfCustomer, getTopCustomers }
 
 
 

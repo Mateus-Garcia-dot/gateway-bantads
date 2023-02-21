@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createManagerRequest, getAllManagersRequest, getManagerRequest, updateManagerRequest } from "../services/manager.service";
+import { createManagerRequest, deleteManagerRequest, getAllManagersRequest, getManagerRequest, updateManagerRequest } from "../services/manager.service";
 import { idSchema } from "../schemas/id.schema";
 import { validate } from "../utils/validate";
 import { managerSchema } from "../schemas/manager.schema";
@@ -20,10 +20,10 @@ async function getManager(req: Request, res: Response) {
 async function createManager(req: Request, res: Response) {
     const body = validate(req.body, managerSchema)
     const manager = await createManagerRequest(body)
-    body.authentication.type = 2
+    body.authentication.type = 3
     body.authentication.isApproved = true
     body.authentication.customer = manager.data.uuid
-    const authentication = await postAuthenticationRequest(body.authentication)
+    await postAuthenticationRequest(body.authentication)
     return res.status(200).json("added")
 }
 
@@ -34,4 +34,10 @@ async function updateManager(req: Request, res: Response) {
     return res.status(200).json(manager)
 }
 
-export { getAllManagers, createManager, getManager, updateManager }
+async function deleteManager(req: Request, res: Response) {
+    const param = validate(req.params, idSchema)
+    await deleteManagerRequest(param.id)
+    return res.status(200).json("deleted")
+}
+
+export { getAllManagers, createManager, getManager, updateManager, deleteManager }
