@@ -1,4 +1,5 @@
-import { authenticationApi, managerApi } from "../databases/axiosConnections";
+import { accountApi, authenticationApi, managerApi } from "../databases/axiosConnections";
+import { Account } from "../schemas/account.schema";
 import { Manager, ManagerWithAuthentication } from "../schemas/manager.schema";
 
 async function getAllManagersRequest() {
@@ -45,4 +46,15 @@ async function deleteManagerRequest(id: string) {
     return await managerApi.delete(`/${id}`)
 }
 
-export { getAllManagersRequest, getManagerRequest, createManagerRequest, updateManagerRequest, deleteManagerRequest }
+async function managerConsumerRequest() {
+    const allManagers = await getAllManagersRequest()
+    const ManagersCustomers = await Promise.all(allManagers.map(async (manager) => {
+        const accounts = await accountApi.get<Account[]>(`/manager/${manager.uuid}`)
+        const sumNegativeBalance = accounts.data.reduce((acc, account) => { return account.balance < 0 ? acc + account.balance : 0 }, 0)
+        const sumPositiveBalance = accounts.data.reduce((acc, account) => { return account.balance > 0 ? acc + account.balance : 0 }, 0)
+        return { ...manager, count: accounts.data.length, sumNegativeBalance, sumPositiveBalance }
+    }))
+    return ManagersCustomers
+}
+
+export { getAllManagersRequest, getManagerRequest, createManagerRequest, updateManagerRequest, deleteManagerRequest, managerConsumerRequest }
