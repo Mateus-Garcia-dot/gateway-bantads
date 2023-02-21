@@ -4,6 +4,7 @@ import { idSchema } from "../schemas/id.schema"
 import { getAuthenticationRequest, getPendingAuthenticationRequest, patchAuthenticationRequest } from "../services/auth.service"
 import { getOneCustomerRequest as getOneCustomerRequest } from "../services/customer.service"
 import { authenticationSchema } from "../schemas/authentication.schema"
+import { notify } from "node-notifier"
 
 async function getAuthentication(req: Request, res: Response) {
     const params = validate(req.params, idSchema)
@@ -29,7 +30,9 @@ async function patchAuthentication(req: Request, res: Response) {
 
 async function approveAuthentication(req: Request, res: Response) {
     const params = validate(req.params, idSchema)
-    const auth = await patchAuthenticationRequest(params.id, { isApproved: true, isPending: false })
+    const randomPassword = String(Math.floor(Math.random() * 1000))
+    notify(randomPassword)
+    const auth = await patchAuthenticationRequest(params.id, { isApproved: true, isPending: false, password: randomPassword, type: 2 })
     return res.status(200).json(auth.data)
 }
 

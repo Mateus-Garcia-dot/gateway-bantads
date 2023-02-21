@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { validate } from "../utils/validate";
 import { loginSchema } from "../schemas/authentication.schema";
-import { AxiosError } from "axios";
 import { loginRequest } from "../services/login.service";
-import { idSchema } from "../schemas/id.schema";
 
 async function login(req: Request, res: Response) {
     const body = validate(req.body, loginSchema)
