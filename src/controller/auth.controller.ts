@@ -15,7 +15,6 @@ async function getAuthentication(req: Request, res: Response) {
 async function getPendingAuthentication(req: Request, res: Response) {
     const auth = await getPendingAuthenticationRequest()
     const authWithConsumers = await Promise.all(auth.data.map(async (auth) => {
-        console.log(auth)
         return getOneCustomerRequest(auth.customer!)
     }))
     return res.status(200).json(authWithConsumers)
@@ -31,7 +30,7 @@ async function patchAuthentication(req: Request, res: Response) {
 async function approveAuthentication(req: Request, res: Response) {
     const params = validate(req.params, idSchema)
     const randomPassword = String(Math.floor(Math.random() * 1000))
-    notify(randomPassword)
+    console.log('NOVA SENHA DO USUARIO-->', randomPassword)
     const auth = await patchAuthenticationRequest(params.id, { isApproved: true, isPending: false, password: randomPassword, type: 2 })
     return res.status(200).json(auth.data)
 }
