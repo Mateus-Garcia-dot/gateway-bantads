@@ -50,18 +50,12 @@ async function getCpfCustomer(req: Request, res: Response) {
 async function getAllCustomersOfManager(req: Request, res: Response) {
     const params = validate(req.params, idSchema)
     const customers = await getAllCustomersRequest()
-    console.log(customers)
     const filteredCustomers = customers?.filter(customer => {
         console.log(customer.account.manager, params.id)
         return customer.account.manager === params.id;
     })
     return res.status(200).json(filteredCustomers)
 }
-// async function deleteCustomer(req: Request, res: Response) {
-//     const params = validate(req.params, idSchema)
-//     await deleteCustomerRequest(params.id)
-//     return res.status(200).json('Deleted')
-// }
 
 export { getAllCustomers, getOneCustomer, register, modifyCustomer, getCpfCustomer, getTopCustomers, getAllCustomersOfManager }
 
